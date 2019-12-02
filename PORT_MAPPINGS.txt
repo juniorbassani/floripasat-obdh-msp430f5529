@@ -1,0 +1,7 @@
+SPI: P3.3, P3.4 e P2.7
+I2C: P3.0 e P3.1
+//Solar panels: P4.3, P4.5 e P1.3.
+TTC: P5.6 e P5.7
+Payload: P3.2
+LEDS: P1.0 e P4.7
+ADC: P6.0

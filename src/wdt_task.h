@@ -2,7 +2,10 @@
 #define SRC_WDT_TASK_H_
 
 //#define _DEBUG
-
+#ifdef DRIVERLIB
+#include <driver/driverlib/wdt_a.h>
+#include <driver/driverlib/gpio.h>
+#endif
 #include "FreeRTOS.h"
 #include "task.h"
 #include "../driver/wdti.h"

@@ -92,10 +92,10 @@ void spi_setup(uint8_t interface) {
         //port_mapping_uca0();
         break;
     case 1:
-        BIT_SET(SPI1_SEL, SPI1_MOSI_PIN | SPI1_MISO_PIN );
+//        BIT_SET(SPI1_SEL, SPI1_MOSI_PIN | SPI1_MISO_PIN );
         //spi1_clock_setup();
         //BIT_SET(SPI1_MISO_REN, SPI1_MISO_PIN);                                  /**< Enable pull-up resistor */
-        BIT_SET(SPI1_MISO_OUT, SPI1_MISO_PIN);
+//        BIT_SET(SPI1_MISO_OUT, SPI1_MISO_PIN);
         break;
     }
 }
@@ -110,10 +110,10 @@ void wait_for_data_sent(uint16_t base_address){
 uint8_t spi_tx(uint16_t base_address, uint8_t data) {
 
     wait_for_buffer_empty(base_address);
-    HWREG8(base_address + OFS_UCAxTXBUF) = data;
+    HWREG8(base_address + UCA0TXBUF) = data;
     wait_for_data_sent(base_address);
 
-	return (HWREG8(base_address + OFS_UCAxRXBUF));
+	return (HWREG8(base_address + UCA0RXBUF));
 }
 
 void spi_tx_multiple(uint16_t base_address, uint8_t *data,uint8_t data_bytes_length) {

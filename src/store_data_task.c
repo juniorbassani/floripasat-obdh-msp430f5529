@@ -66,7 +66,7 @@ void store_data_task( void *pvParameters ) {
 
     while(1) {
         // For debug
-        // P1OUT ^= BIT0;
+        P1OUT ^= BIT0;
 
         /**< Test if memory size is working to report status */
         mem1_status = 0;

@@ -39,6 +39,7 @@
 #define FULL 1
 #define NOT_FULL 0
 
+#define FRCOMPATIBLE
 
 /*
  * FLASH MEMORY ADRESSES

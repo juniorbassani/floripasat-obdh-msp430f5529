@@ -162,12 +162,12 @@ void halSPISetup(void)
 
 void halSPISetup(void)
 {
-  UCA1CTL0 = UCMST+UCCKPL+UCMSB+UCSYNC;     // 3-pin, 8-bit SPI master
-  UCA1CTL1 = UCSSEL_2 + UCSWRST;            // SMCLK
-  UCA1BR0 |= 0x02;                          // UCLK/2
-  UCA1BR1 = 0;
-  UCA1MCTLW = 0;
-  UCA1CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
+  UCA0CTL0 = UCMST+UCCKPL+UCMSB+UCSYNC;     // 3-pin, 8-bit SPI master
+  UCA0CTL1 = UCSSEL_2 + UCSWRST;            // SMCLK
+  UCA0BR0 |= 0x02;                          // UCLK/2
+  UCA0BR1 = 0;
+  UCA0MCTL = 0;
+  UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
 }
 
 #elif SPI_SER_INTF == SER_INTF_USCIB0

@@ -65,7 +65,7 @@ void payload_rush_interface_task( void *pvParameters ) {
     while(1)
     {
         // For debug
-        // P1OUT ^= BIT0;
+        P1OUT ^= BIT0;
 
         /**< try to get the mutex */
         if ( xSemaphoreTake( i2c0_semaphore, I2C_SEMAPHORE_WAIT_TIME ) == pdPASS)

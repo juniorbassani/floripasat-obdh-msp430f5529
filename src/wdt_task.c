@@ -28,7 +28,6 @@
  * \author Elder Tramontin
  *
  */
-
 #include <src/wdt_task.h>
 
 void wdt_task( void *pvParameters )
@@ -45,7 +44,11 @@ void wdt_task( void *pvParameters )
     #endif
 
         // For debug
+#ifdef DRIVERLIB
+        //GPIO_toggleOutputOnPin(GPIO_PORT_P1, GPIO_PIN0);
+#else
         P1OUT ^= BIT0;
+#endif
 
         if ( (last_wake_time + WDT_TASK_PERIOD_TICKS) < xTaskGetTickCount() ) {
             last_wake_time = xTaskGetTickCount();

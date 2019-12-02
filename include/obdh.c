@@ -64,7 +64,7 @@ void create_tasks( void ) {
      * Create each task: links with a routine, allocates the requested task
      * stack size, sets the priority, passes parameters and get a handler
      */
-    xTaskCreate( wdt_task, "WDT", configMINIMAL_STACK_SIZE, NULL, 5, &wdt_task_handle );
+//    xTaskCreate( wdt_task, "WDT", configMINIMAL_STACK_SIZE, NULL, 5, &wdt_task_handle );
 //    xTaskCreate( communications_task, "Communications", 6 * configMINIMAL_STACK_SIZE, NULL, 5, &communications_task_handle );
 //    xTaskCreate( store_data_task, "StoreData", 11 * configMINIMAL_STACK_SIZE, NULL , 5, &store_data_task_handle);
 //    xTaskCreate( housekeeping_task, "Housekeeping", configMINIMAL_STACK_SIZE, NULL, 5, &housekeeping_task_handle);
@@ -72,7 +72,7 @@ void create_tasks( void ) {
     //xTaskCreate( eps_interface_task, "EPS", configMINIMAL_STACK_SIZE, NULL, EPS_INTERFACE_TASK_PRIORITY, &eps_interface_task_handle );
     //xTaskCreate( imu_interface_task, "IMU", configMINIMAL_STACK_SIZE, NULL, IMU_INTERFACE_TASK_PRIORITY, &imu_interface_task_handle);
     //xTaskCreate( solar_panels_interface_task, "SolarPanels", configMINIMAL_STACK_SIZE, NULL, SOLAR_PANELS_INTERFACE_TASK_PRIORITY, &solar_panels_interface_task_handle);
-    //xTaskCreate( payload_rush_interface_task, "PayloadRush", configMINIMAL_STACK_SIZE, NULL, 5, &payload_rush_interface_task_handle );
+//    xTaskCreate( payload_rush_interface_task, "PayloadRush", configMINIMAL_STACK_SIZE, NULL, 5, &payload_rush_interface_task_handle );
     //xTaskCreate( runtime_stats_task, "RuntimeStats", 125, NULL, RUNTIME_STATS_TASK_PRIORITY, NULL );
 #ifdef _DEBUG
     //xTaskCreate( debug_task, "DEBUG", 4 * configMINIMAL_STACK_SIZE, NULL, DEBUG_TASK_PRIORITY, &debug_task_handle);
@@ -80,13 +80,17 @@ void create_tasks( void ) {
 }
 
 void gpio_setup() {
+#ifdef DRIVERLIB
+    GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN7);
+    GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
+#else
     P4OUT &= BIT7;
     P1OUT &= BIT0;
 
     P1DIR = BIT0;
     P4DIR = BIT7;
-
-//    rf4463_gpio_init();
+#endif
+    //    rf4463_gpio_init();
 }
 
 void uart_setup(void)
@@ -121,17 +125,28 @@ void uart_setup(void)
 
 void clock_setup(void)
 {
-//    // Configure one FRAM waitstate as required by the device datasheet for MCLK
-//    // operation beyond 8MHz _before_ configuring the clock system.
-//    FRCTL0 = FRCTLPW | NWAITS_1;
-//
-//    // Clock System Setup
-//    CSCTL0_H = CSKEY >> 8;                    // Unlock CS registers
-//    CSCTL1 = DCORSEL | DCOFSEL_4;             // Set DCO to 16MHz
-//    CSCTL2 = SELA__VLOCLK | SELS__DCOCLK | SELM__DCOCLK; // Set SMCLK = MCLK = DCO,
-//                                              // ACLK = VLOCLK
-//    CSCTL3 = DIVA__1 | DIVS__1 | DIVM__1;     // Set all dividers
-//    CSCTL0_H = 0;                             // Lock CS registers
+    UCSCTL3 |= SELREF_2;                      // Set DCO FLL reference = REFO
+    UCSCTL4 |= SELA_2;                        // Set ACLK = REFO
+    __bis_SR_register(SCG0);                  // Disable the FLL control loop
+    UCSCTL0 = 0x0000;                         // Set lowest possible DCOx, MODx
+    UCSCTL1 = DCORSEL_5;                      // Select DCO range 16MHz operation
+    UCSCTL2 = FLLD_0 + 487;                   // Set DCO Multiplier for 16MHz
+                                              // (N + 1) * FLLRef = Fdco
+                                              // (487 + 1) * 32768 = 16MHz
+                                              // Set FLL Div = fDCOCLK
+    __bic_SR_register(SCG0);                  // Enable the FLL control loop
+
+    // Worst-case settling time for the DCO when the DCO range bits have been
+    // changed is n x 32 x 32 x f_MCLK / f_FLL_reference. See UCS chapter in 5xx
+    // UG for optimization.
+    // 32 x 32 x 16 MHz / 32,768 Hz = 500000 = MCLK cycles for DCO to settle
+    __delay_cycles(500000);//
+    // Loop until XT1,XT2 & DCO fault flag is cleared
+    do
+    {
+        UCSCTL7 &= ~(XT2OFFG + XT1LFOFFG + DCOFFG); // Clear XT2,XT1,DCO fault flags
+        SFRIFG1 &= ~OFIFG;                          // Clear fault flags
+    }while (SFRIFG1&OFIFG);                         // Test oscillator fault flag
 }
 
 void setup_hardware( void ) {
@@ -147,7 +162,7 @@ void setup_hardware( void ) {
     wdti_setup(WATCHDOG, WD_16_SEC);
     //WDTCTL = WDTPW | WDTHOLD;
 
-//    clock_setup();
+    clock_setup();
 
     //wdte_setup();
     //wdte_reset_counter();
@@ -171,7 +186,7 @@ void setup_hardware( void ) {
     ///*
      //* Setup I2C interfaces 0, 1 and 2
      //*/
-//    i2c_setup(0);
+    i2c_setup(0);
     //i2c_setup(1);
     //i2c_setup(2);
 //
@@ -180,7 +195,7 @@ void setup_hardware( void ) {
     /*
      * Setup SPI interfaces 0 and 1
      */
-//    spi_setup(0);
+    spi_setup(0);
 //    spi_setup(1);
 
 //    uart_setup();

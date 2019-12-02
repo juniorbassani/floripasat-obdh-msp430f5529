@@ -29,6 +29,10 @@
 #ifndef INCLUDE_OBDH_H_
 #define INCLUDE_OBDH_H_
 
+#ifdef DRIVERLIB
+#include <driver/driverlib/wdt_a.h>
+#include <driver/driverlib/gpio.h>
+#endif
 #include "../FreeRTOS_Source/include/FreeRTOS.h"
 #include "../FreeRTOS_Source/include/task.h"
 #include "../FreeRTOS_Source/include/timers.h"
@@ -37,25 +41,26 @@
 #include "../hal/obdh_hal.h"
 #include "../include/floripasat_def.h"
 //#include "../driver/clocks.h"
-//#include "../driver/adc.h"
+#include "../driver/adc.h"
 //#include "../driver/uart.h"
-//#include "../driver/i2c.h"
-//#include "../driver/spi.h"
+#include "../driver/i2c.h"
+#include "../driver/spi.h"
+#include "../driver/flash.h"
 //#include "../driver/timer_b.h"
 #include "../driver/wdti.h"
 //#include "../interface/wdte.h"
 #include "../interface/eps.h"
 //#include "../include/antenna.h"
 #include "../src/task_queues.h"
-//#include "../src/communications_task.h"
+#include "../src/communications_task.h"
 //#include "../src/debug_task.h"
 //#include "../src/eps_interface_task.h"
-//#include "../src/housekeeping_task.h"
+#include "../src/housekeeping_task.h"
 //#include "../src/imu_interface_task.h"
-//#include "../src/payload_rush_interface_task.h"
-//#include "../src/store_data_task.h"
+#include "../src/payload_rush_interface_task.h"
+#include "../src/store_data_task.h"
 //#include "../src/solar_panels_interface_task.h"
-//#include "../src/ttc_interface_task.h"
+#include "../src/ttc_interface_task.h"
 #include "../src/wdt_task.h"
 //#include "../src/runtime_stats_task.h"
 //#include "../rf4463/rf4463.h"

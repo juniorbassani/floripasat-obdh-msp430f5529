@@ -33,15 +33,12 @@
 
 void adc_setup(void) {
 #ifdef _SIM
-    P1SEL1 |= BIT1;                           // Configure P1.1 for ADC
-    P1SEL0 |= BIT1;
+    P6SEL |= 0x01;                            // P6.0 ADC option select
 
     // Configure ADC12
-    ADC12CTL0 = ADC12SHT0_2 | ADC12ON;        // Sampling time, S&H=16, ADC12 on
+    ADC12CTL0 = ADC12SHT02 + ADC12ON;         // Sampling time, ADC12 on
     ADC12CTL1 = ADC12SHP;                     // Use sampling timer
-    ADC12CTL2 |= ADC12RES_2;                  // 12-bit conversion results
-    ADC12MCTL0 |= ADC12INCH_1;                // A1 ADC input select; Vref=AVCC
-    ADC12IER0 |= ADC12IE0;                    // Enable ADC conv complete interrupt
+    ADC12IE = 0x01;                           // Enable interrupt
 #else
     //  Internal temperature reading setup
     REFCTL0 &= ~REFMSTR;                      // Reset REFMSTR to hand over control to

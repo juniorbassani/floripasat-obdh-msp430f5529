@@ -50,7 +50,7 @@ void housekeeping_task( void *pvParameters ) {
 
     while(1) {
         // For debug
-        // P4OUT ^= BIT6;
+        P4OUT ^= BIT7;
 
         /* Periodic reset */
         current_time = xTaskGetTickCount() / (uint32_t) configTICK_RATE_HZ;

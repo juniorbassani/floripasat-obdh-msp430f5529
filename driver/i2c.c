@@ -29,6 +29,7 @@
  *
  */
 #include <msp430.h>
+#include <msp430f5xx_6xxgeneric.h>
 #include "i2c.h"
 
 #define I2C_TIMEOUT                 10000           /**< tries until forsake the current transmission  */
@@ -67,10 +68,10 @@ void i2c_setup(uint8_t interface) {
     case 0:
         i2c_pin_reset(&I2C0_REN, &I2C0_DIR, &I2C0_OUT, I2C0_SCL);
         BIT_SET(I2C0_SEL, I2C0_SDA | I2C0_SCL);
-        i2c_set_clock(EUSCI_B0_BASE);
-        i2c_set_slave(EUSCI_B0_BASE, EPS_I2C_SLAVE_ADRESS);
+        i2c_set_clock(USCI_B0_BASE);
+        i2c_set_slave(USCI_B0_BASE, EPS_I2C_SLAVE_ADRESS);
         //port_mapping_ucb0();
-        i2c_set_mode(EUSCI_B0_BASE, TRANSMIT_MODE);
+        i2c_set_mode(USCI_B0_BASE, TRANSMIT_MODE);
         break;
     //case 1:
         //i2c_pin_reset(&I2C1_REN, &I2C1_DIR, &I2C1_OUT, I2C1_SCL);
@@ -90,22 +91,22 @@ void i2c_setup(uint8_t interface) {
 }
 
 void i2c_set_clock(uint16_t base_address) {
-    HWREG8(base_address + OFS_UCBxCTL1) |= UCSWRST;                     /**< Enable SW reset                    */
-    HWREG8(base_address + OFS_UCBxCTL0)  = UCMST | UCMODE_3 | UCSYNC;   /**< I2C Master, synchronous mode       */
-    HWREG8(base_address + OFS_UCBxCTL1)  = UCSSEL_2 | UCSWRST;          /**< Use SMCLK, keep SW reset           */
-    HWREG8(base_address + OFS_UCBxBR0)   = 160;                         /**< fSCL = SMCLK/160 = ~100kHz         */
-    HWREG8(base_address + OFS_UCBxBR1)   = 0;
-    HWREG8(base_address + OFS_UCBxCTL1) &= ~UCSWRST;                    /**< Clear SW reset, resume operation   */
+    UCB0CTL1 |= UCSWRST;                     /**< Enable SW reset                    */
+    UCB0CTL1 |= UCSWRST;   /**< I2C Master, synchronous mode       */
+    UCB0CTL1 = UCSSEL_2 + UCSWRST;          /**< Use SMCLK, keep SW reset           */
+    UCB0BR0 = 160;                            // fSCL = SMCLK/160 = ~100kHz
+    UCB0BR1 = 0;
+    UCB0CTL1 &= ~UCSWRST;                     // Clear SW reset, resume operation
 }
 
 void i2c_set_mode(uint16_t base_address, uint8_t mode) {
-    HWREG8(base_address + OFS_UCBxCTL1) &= ~UCTR;
-    HWREG8(base_address + OFS_UCBxCTL1) |= mode;
+    UCB0CTL1 &= ~UCTR;            // Switch to receiver
+    UCB0CTL1 |= mode;
 }
 
 
 void i2c_set_slave(uint16_t base_address, uint8_t slave_address) {
-    HWREG16(base_address + OFS_UCBxI2CSA) = slave_address;
+    UCB0I2CSA = slave_address;
 }
 
 uint8_t i2c_send(uint16_t base_address, uint8_t tx_data, uint8_t start_stop_flag) {

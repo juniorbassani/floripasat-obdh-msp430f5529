@@ -42,13 +42,13 @@
 
 // ##MODIFICADO##                    // MSP430 device being used.
 // SPI port definitions              // Adjust the values for the chosen
-#define SPI_PxSEL         P2SEL1     // interfaces, according to the pin
-#define SPI_PxDIR         P2DIR      // assignments indicated in the
-#define SPI_PxIN          P2IN       // chosen MSP430 device datasheet.
-#define SPI_PxOUT         P2OUT
-#define SPI_SIMO          BIT0
-#define SPI_SOMI          BIT1
-#define SPI_UCLK          BIT5
+#define SPI_PxSEL         P3SEL     // interfaces, according to the pin
+#define SPI_PxDIR         P3DIR      // assignments indicated in the
+#define SPI_PxIN          P3IN       // chosen MSP430 device datasheet.
+#define SPI_PxOUT         P3OUT
+#define SPI_SIMO          BIT3
+#define SPI_SOMI          BIT4
+#define SPI_UCLK          BIT7
 
 //----------------------------------------------------------------------------
 // SPI/UART port selections.  Select which port will be used for the interface 

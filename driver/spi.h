@@ -30,6 +30,7 @@
  */
 #include <msp430.h>
 #include <stdint.h>
+#include <msp430f5xx_6xxgeneric.h>
 #include "../hal/obdh_hal.h"
 
 /**
